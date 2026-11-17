@@ -1,0 +1,167 @@
+[
+  {
+    "tool_name": "nexus_fx_market_stream",
+    "description": "Fetches real-time exchange rates, macroeconomic volatility indexes, and order book bid/ask spreads for specified fiat currency pairs directly from the NexusPay Global core exchange network.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "currency_pair": {
+          "type": "string",
+          "description": "The ISO 4217 standard currency pair to query (e.g., 'USD/EUR', 'GBP/JPY')."
+        },
+        "include_volatility_metrics": {
+          "type": "boolean",
+          "description": "Flag to include 24-hour implied volatility and standard deviation metrics."
+        }
+      },
+      "required": [
+        "currency_pair"
+      ]
+    },
+    "expected_output": "A JSON payload containing the current spot rate, 24-hour percentage change, liquidity depth, and an implied volatility score ranging from 0.0 to 1.0."
+  },
+  {
+    "tool_name": "sentinel_historical_rag_search",
+    "description": "Performs semantic search against NexusPay's secure vector database of historical banking client reports, previous market impact analyses, and past macroeconomic event logs to identify precedents for current currency fluctuations.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "search_query": {
+          "type": "string",
+          "description": "The semantic query detailing the current market condition (e.g., 'impact of unexpected ECB rate hike on USD/EUR liquidity')."
+        },
+        "time_horizon": {
+          "type": "string",
+          "description": "The historical timeframe to constrain the search (e.g., '6m', '1y', '5y', 'all')."
+        },
+        "top_k": {
+          "type": "integer",
+          "description": "The number of contextually relevant historical reports to return."
+        }
+      },
+      "required": [
+        "search_query",
+        "time_horizon"
+      ]
+    },
+    "expected_output": "An array of the top_k most relevant historical insights, including summary text, date of event, and the specific hedging strategy utilized by NexusPay clients during that event."
+  },
+  {
+    "tool_name": "fx_exposure_risk_calculator",
+    "description": "Calculates the specific financial exposure and portfolio risk impact for a given client portfolio based on provided real-time currency fluctuation data and baseline balances.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "client_portfolio_id": {
+          "type": "string",
+          "description": "The unique UUID of the tier-one banking client's portfolio."
+        },
+        "currency_pair": {
+          "type": "string",
+          "description": "The currency pair experiencing volatility."
+        },
+        "volatility_score": {
+          "type": "number",
+          "description": "The implied volatility score retrieved from the market stream (0.0 to 1.0)."
+        }
+      },
+      "required": [
+        "client_portfolio_id",
+        "currency_pair",
+        "volatility_score"
+      ]
+    },
+    "expected_output": "A risk assessment object containing 'Value_at_Risk_USD', 'exposure_severity' (LOW, MEDIUM, HIGH, CRITICAL), and a recommended percentage 'hedge_ratio' to mitigate the calculated exposure."
+  },
+  {
+    "tool_name": "global_compliance_validator",
+    "description": "Checks proposed hedging trades against international banking regulations (Basel III), regional AML/KYC policies, and the specific risk mandate covenants of the client portfolio.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "client_portfolio_id": {
+          "type": "string",
+          "description": "The unique UUID of the client's portfolio."
+        },
+        "instrument_type": {
+          "type": "string",
+          "description": "The type of hedge instrument (e.g., 'forward_contract', 'currency_option', 'spot_execution')."
+        },
+        "notional_amount": {
+          "type": "number",
+          "description": "The total notional amount of the proposed trade in USD."
+        }
+      },
+      "required": [
+        "client_portfolio_id",
+        "instrument_type",
+        "notional_amount"
+      ]
+    },
+    "expected_output": "A JSON object containing a boolean 'clearance_granted', a 'compliance_score' (1-100), and an array of 'flagged_warnings' if any regulatory thresholds are closely approached."
+  },
+  {
+    "tool_name": "nexus_hedge_trade_queuer",
+    "description": "Safely stages and queues a hedging trade in the NexusPay sandbox execution environment. This tool DOES NOT execute the trade; it strictly generates a secure trade payload and places it in a 'pending_approval' queue for human authorization.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "client_portfolio_id": {
+          "type": "string",
+          "description": "The unique UUID of the client's portfolio."
+        },
+        "trade_action": {
+          "type": "string",
+          "description": "The action to take ('buy', 'sell')."
+        },
+        "currency_pair": {
+          "type": "string",
+          "description": "The target currency pair."
+        },
+        "amount": {
+          "type": "number",
+          "description": "The trade size."
+        },
+        "ai_justification_log": {
+          "type": "string",
+          "description": "A detailed explanation of why the agent is recommending this trade, referencing market data and historical precedents."
+        }
+      },
+      "required": [
+        "client_portfolio_id",
+        "trade_action",
+        "currency_pair",
+        "amount",
+        "ai_justification_log"
+      ]
+    },
+    "expected_output": "A JSON response containing a unique 'staging_queue_id', a timestamp, and a status strictly set to 'PENDING_HUMAN_APPROVAL'."
+  },
+  {
+    "tool_name": "sentinel_alert_dispatcher",
+    "description": "An emergency communication tool that dispatches high-priority alerts to the Enterprise Architecture monitoring team or the designated human portfolio manager when anomalies, tool timeouts, or unhandled exceptions occur during agent execution.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "severity_level": {
+          "type": "string",
+          "description": "The severity of the alert: 'INFO', 'WARNING', 'ERROR', 'CRITICAL'."
+        },
+        "alert_message": {
+          "type": "string",
+          "description": "A descriptive message detailing the issue, timeout, or anomaly."
+        },
+        "source_module": {
+          "type": "string",
+          "description": "The agent module reporting the issue (e.g., 'Perception', 'Planner', 'Executor')."
+        }
+      },
+      "required": [
+        "severity_level",
+        "alert_message",
+        "source_module"
+      ]
+    },
+    "expected_output": "A delivery confirmation object containing 'dispatch_id', 'timestamp', and 'notified_parties'."
+  }
+]
